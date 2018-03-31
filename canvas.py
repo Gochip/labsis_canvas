@@ -1001,6 +1001,50 @@ class ImageCanvas(ObjectCanvas):
         #cr.restore()
 
 
+
+class Linking(ObjectCanvas):
+    """
+    This class represents link between a fixed point and movement mouse.
+    """
+    def __init__(self, pfx, pfy):
+        super(Linking, self).__init__()
+        self.pfx = pfx
+        self.pfy = pfy
+        self.old_x = pfx
+        self.old_y = pfy
+        self.old_width = 0
+        self.old_height = 0
+
+    def is_selectable(self):
+        return False
+
+    def move(self, s):
+        self.old_x = min(self.get_x(), self.pfx)
+        self.old_y = min(self.get_y(), self.pfy)
+        self.old_width = self.width
+        self.old_height = self.height
+        self.width = self.pfx + s.get_x()
+        self.height = self.pfy - s.get_y()
+        super().move(s)
+
+    def repaint(self):
+        xi = min(self.old_x, self.pfx)
+        yi = min(self.old_y, self.pfy)
+        self.width = max(self.get_width(), self.old_width)
+        self.height = max(self.get_height(), self.old_height)
+        self.canvas.queue_draw_area(xi - 3, yi - 3, self.width + 6, self.height + 6)
+
+    def contains(self):
+        return True
+
+    def draw(self, w, cr):
+        cr.set_line_width(2)
+        cr.set_source_rgb(0, 0, 0)
+        cr.move_to(self.pfx, self.pfy)
+        cr.line_to(self.x, self.y)
+        cr.stroke()
+
+
 class AnimationRectangleCanvas(RectangleCanvas):
 
     def __init__(self):
