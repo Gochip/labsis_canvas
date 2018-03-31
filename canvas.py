@@ -110,8 +110,9 @@ class Canvas(Gtk.DrawingArea):
     def search(self, x, y):
         """
         Description:
-            Return a object in the position (x, y) or None if is a empty point.
-            Takes into account the axis z.
+            Return an object in position (x, y) or None if is an empty point.
+            Takes into account the axis z, this is, the first element in the
+            top.
         """
         obj = None
         i = len(self.objects) - 1
@@ -912,29 +913,59 @@ class CircleCanvas(ObjectCanvas):
         self.y = yc - radio
         self.width = radio * 2
         self.height = radio * 2
-        self.rgb_no_selected = (0, 0, 255)
-        self.rgb_selected = (0, 255, 0)
-
-    def set_rgb_no_selected(self, rgb):
-        self.rgb_no_selected = rgb
-
-    def set_rgb_selected(self, rgb):
-        self.rgb_selected = rgb
+        self.background_color_moving_rgb = (50, 50, 50, 0.2)
+        self.background_color_selected_rgb = (50, 50, 50, 0.2)
+        self.background_color_no_selected_rgb = (255, 255, 255, 0)
+        self.border_color_moving_rgb = (0, 0, 0, 1)
+        self.border_color_selected_rgb = (0, 0, 0, 1)
+        self.border_color_no_selected_rgb = (0, 0, 0, 1)
 
     def draw(self, w, cr):
+        # Llenado.
         if self.selected and self.moving:
-            cr.set_source_rgb(255, 0, 0)
+            cr.set_source_rgba(self.background_color_moving_rgb[0],
+                              self.background_color_moving_rgb[1],
+                              self.background_color_moving_rgb[2],
+                              self.background_color_moving_rgb[3])
         elif self.selected:
-            cr.set_source_rgb(self.rgb_selected[0], self.rgb_selected[1], self.rgb_selected[2])
+            cr.set_source_rgba(self.background_color_selected_rgb[0],
+                              self.background_color_selected_rgb[1],
+                              self.background_color_selected_rgb[2],
+                              self.background_color_selected_rgb[3])
         else:
-            cr.set_source_rgb(self.rgb_no_selected[0], self.rgb_no_selected[1], self.rgb_no_selected[2])
+            cr.set_source_rgba(self.background_color_no_selected_rgb[0],
+                              self.background_color_no_selected_rgb[1],
+                              self.background_color_no_selected_rgb[2],
+                              self.background_color_no_selected_rgb[3])
         cr.save()
         cr.translate(self.get_x() + self.get_width() / 2., self.get_y() + self.get_height() / 2.)
         cr.scale(self.get_width() / 2., self.get_height() / 2.)
         cr.arc(0., 0., 1., 0., 2 * math.pi)
-        #cr.arc(self.x + self.radio, self.y + self.radio, self.radio, 0, math.pi * 2)
-        cr.restore()
         cr.fill()
+        cr.restore()
+
+        # Bordes.
+        if self.selected and self.moving:
+            cr.set_source_rgba(self.border_color_moving_rgb[0],
+                              self.border_color_moving_rgb[1],
+                              self.border_color_moving_rgb[2],
+                              self.border_color_moving_rgb[3])
+        elif self.selected:
+            cr.set_source_rgba(self.border_color_selected_rgb[0],
+                              self.border_color_selected_rgb[1],
+                              self.border_color_selected_rgb[2],
+                              self.border_color_selected_rgb[3])
+        else:
+            cr.set_source_rgba(self.border_color_no_selected_rgb[0],
+                              self.border_color_no_selected_rgb[1],
+                              self.border_color_no_selected_rgb[2],
+                              self.border_color_no_selected_rgb[3])
+        cr.translate(self.get_x() + self.get_width() / 2., self.get_y() + self.get_height() / 2.)
+        cr.scale(self.get_width() / 2., self.get_height() / 2.)
+        cr.set_line_width(1 / self.get_width() / 2)
+        cr.arc(0., 0., 1., 0., 2 * math.pi)
+        cr.stroke()
+        cr.restore()
 
 
 class LineCanvas(ObjectCanvas):
