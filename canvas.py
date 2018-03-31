@@ -1014,6 +1014,7 @@ class Linking(ObjectCanvas):
         self.old_y = pfy
         self.old_width = 0
         self.old_height = 0
+        self.set_follower(True)
 
     def is_selectable(self):
         return False
@@ -1034,7 +1035,7 @@ class Linking(ObjectCanvas):
         self.height = max(self.get_height(), self.old_height)
         self.canvas.queue_draw_area(xi - 3, yi - 3, self.width + 6, self.height + 6)
 
-    def contains(self):
+    def contains(self, x, y):
         return True
 
     def draw(self, w, cr):

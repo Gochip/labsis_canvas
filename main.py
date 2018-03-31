@@ -96,7 +96,6 @@ class MyCanvas(Canvas.Canvas):
         l = Canvas.Linking(x, y)
         l.set_x(x)
         l.set_y(y)
-        l.set_follower(True)
         self.linkings.append(l)
         self.add_last(l)
 
