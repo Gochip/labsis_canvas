@@ -1006,6 +1006,7 @@ class Linking(ObjectCanvas):
     """
     This class represents link between a fixed point and movement mouse.
     """
+
     def __init__(self, pfx, pfy):
         super(Linking, self).__init__()
         self.pfx = pfx
@@ -1020,12 +1021,12 @@ class Linking(ObjectCanvas):
         return False
 
     def move(self, s):
-        self.old_x = min(self.get_x(), self.pfx)
-        self.old_y = min(self.get_y(), self.pfy)
+        self.old_x = self.get_x()
+        self.old_y = self.get_y()
         self.old_width = self.width
         self.old_height = self.height
-        self.width = self.pfx + s.get_x()
-        self.height = self.pfy - s.get_y()
+        self.width = abs(self.get_x() - self.pfx + s.get_x())
+        self.height = abs(self.get_y() - self.pfy - s.get_y())
         super().move(s)
 
     def repaint(self):
@@ -1039,7 +1040,7 @@ class Linking(ObjectCanvas):
         return True
 
     def draw(self, w, cr):
-        cr.set_line_width(2)
+        cr.set_line_width(1)
         cr.set_source_rgb(0, 0, 0)
         cr.move_to(self.pfx, self.pfy)
         cr.line_to(self.x, self.y)
